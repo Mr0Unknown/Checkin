@@ -23,8 +23,8 @@ public class Main extends JavaPlugin {
     private FileConfiguration config;
     private FileConfiguration item;
     private String qianzhui = new String("qiandao");
-    protected HashMap<String,HashMap<String,ItemStack>> allgift = new HashMap<String,HashMap<String,ItemStack>>();
-    protected HashMap<String,ItemStack> songift = new HashMap<String,ItemStack>();
+    protected HashMap<String, HashMap<String, ItemStack>> allgift = new HashMap<String, HashMap<String, ItemStack>>();
+    protected HashMap<String, ItemStack> songift = new HashMap<String, ItemStack>();
 
     @Override
     public void onEnable() {
@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase(qianzhui)) {
-                Player player = (Player) sender;
+            Player player = (Player) sender;
             saveorloadhashmap access = new saveorloadhashmap();
             if (args[0].equalsIgnoreCase("create")) {
                 if (player.hasPermission("Checkin.create")) {
@@ -61,35 +61,29 @@ public class Main extends JavaPlugin {
                         String giftname = args[1];
                         if (allgift.containsKey(args[1])) {
                             sender.sendMessage("§c礼包[" + args[1] + "§a]已存在");
-                        }
-                        else {
+                        } else {
                             allgift.put(giftname, null);
                             sender.sendMessage("§a礼包[" + giftname + "]创建成功");
                             access.savehashmap(allgift, getDataFolder() + File.separator + "allgift.bin");
                         }
                     }
-                }
-                else {
+                } else {
                     this.donthavePermission(sender);
                 }
-            }
-            else if (args[0].equalsIgnoreCase("remove")) {
+            } else if (args[0].equalsIgnoreCase("remove")) {
                 if (player.hasPermission("Checkin.remove")) {
                     access.loadedhashmap();
                     String giftname = args[1];
                     //判定礼包存在不存在
                     if (allgift.containsKey(giftname)) {
                         allgift.remove(giftname);
-                    }
-                    else {
+                    } else {
                         sender.sendMessage("§c该礼包不存在");
                     }
-                }
-                else {
+                } else {
                     this.donthavePermission(sender);
                 }
-            }
-            else if (args[0].equalsIgnoreCase("add")) {
+            } else if (args[0].equalsIgnoreCase("add")) {
                 if (player.hasPermission("Checkin.add")) {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage("该指令不允许在控制台使用!");
@@ -100,20 +94,17 @@ public class Main extends JavaPlugin {
                         if (allgift.containsKey(giftname)) {
                             //获取玩家手中物品
                             ItemStack hand = player.getInventory().getItemInHand();
-                            }
                         }
                     }
                 } else {
                     this.donthavePermission(sender);
                 }
-            }
-            else if(args[0].equalsIgnoreCase("get")){
-                if(player.hasPermission("Checkin.get")){
-                    if(sender instanceof Player){
+            } else if (args[0].equalsIgnoreCase("get")) {
+                if (player.hasPermission("Checkin.get")) {
+                    if (sender instanceof Player) {
                     }
                 }
-            }
-            else if (args[0].equalsIgnoreCase("help")) {
+            } else if (args[0].equalsIgnoreCase("help")) {
                 this.help(sender);
             } else {
                 this.help(sender);
