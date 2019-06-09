@@ -1,3 +1,10 @@
 name: Checkin
 main: com.github.Mr0Unknown.Checkin.Main
-version: 1.0.0
+version: 1.5.1
+commands:
+  qiandao
+permissions:
+  checkin.player:
+    description: 玩家默认拥有一部分权限
+    default: true
+    children:
