@@ -16,7 +16,7 @@ public class saveorloadhashmap {
             e.printStackTrace();
         }
     }
-    protected final void saveothersitem(HashMap<String,HashMap<Integer,ItemStack>> othersitem, String path) {
+    protected static final void saveothersitem(HashMap<String,HashMap<Integer,ItemStack>> othersitem, String path) {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
             oos.writeObject(othersitem);
