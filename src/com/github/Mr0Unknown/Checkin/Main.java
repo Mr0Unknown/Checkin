@@ -1,6 +1,5 @@
 package com.github.Mr0Unknown.Checkin;
 
-import net.minecraftforge.event.world.NoteBlockEvent;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
