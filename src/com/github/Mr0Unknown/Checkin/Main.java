@@ -354,7 +354,7 @@ public class Main extends JavaPlugin {
             }
             else if (args[0].equalsIgnoreCase("reload")){
                 Player player = (Player) sender;
-                if (player.hasPermission(Checkin.reload)) {
+                if (player.hasPermission("Checkin.reload")) {
                     this.reloadConfig();
                     File timesfile = new File(this.getDataFolder(), "times.yml");
                     File decisionfile = new File(this.getDataFolder(), "decision.yml");
