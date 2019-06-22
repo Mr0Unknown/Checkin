@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.inventory.ItemStack;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -24,7 +25,10 @@ public class Main extends JavaPlugin {
     private FileConfiguration config;
     private FileConfiguration times;
     private FileConfiguration decision;
-    private String prefix = new String("qiandao");
+    private Integer howdays;
+    private Integer howminutes;
+    private Integer howseconds;
+    private String prefix = new String("Checkin");
     protected final String othersitempath = new String(getDataFolder() + File.separator+"othersitem.bin");
 
     /**创建以globalgift为命名的HashMap类型成员变量来储存礼包*/
@@ -52,6 +56,7 @@ public class Main extends JavaPlugin {
             decision = YamlConfiguration.loadConfiguration(decisionfile);
             this.createfile(timesfile);
             times = YamlConfiguration.loadConfiguration(timesfile);
+            this.createfile(configFile);
         /***/
         if (!configFile.exists()) {
             saveDefaultConfig();
@@ -224,7 +229,7 @@ public class Main extends JavaPlugin {
                                             //写入decision中
                                             decision.set(giftname+".time",done);
                                             //保存decision.yml
-                                            decision.save(decisionfile);
+                                            this.savefile(decisionfile,decision);
                                         }
                                         catch (Exception e){
                                             e.printStackTrace();
@@ -239,7 +244,7 @@ public class Main extends JavaPlugin {
                                     this.createfile(decisionfile);
                                     decision.set(giftname+".permission",args[3]);
                                     try {
-                                        decision.save(decisionfile);
+                                        this.savefile(decisionfile,decision);
                                     }
                                     catch (Exception e){
                                         e.printStackTrace();
@@ -272,7 +277,7 @@ public class Main extends JavaPlugin {
                             boolean booleantime = decision.contains(giftname+".time");
                             /***/
 
-                            //只设置过time(时间)
+                            //只设置过permission(权限)
                             if (booleantime == false){
                                 if (booleanpermission == true) {
                                     if (player.hasPermission(decision.getString(giftname + ".permission"))) {
@@ -280,21 +285,35 @@ public class Main extends JavaPlugin {
                                     }
                                 }
                             }
-                            //只设置过permission(权限)
+                            //只设置过time(时间)
                             else if (booleanpermission == false){
                                 if (booleantime == true) {
                                     boolean decide = this.booleangetgift(sender,player,giftname,times,decision);
                                     if (decide == true){
                                         this.getgift(sender,player,giftname);
+                                        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+                                        Date now = new Date();
+                                        String temporay = date.format(now);
+                                        times.set(player.getName()+"."+giftname,temporay);
+                                        File timesfile = new File(this.getDataFolder(),"times.yml");
+                                        this.savefile(timesfile,times);
+                                    }
+                                    else {
+                                        sender.sendMessage("§c距离下一次领取礼包世界还有"+howdays.toString()+"时"+howminutes.toString()+"分"+howseconds.toString()+"秒");
                                     }
                                 }
                             }
                             //两者都设置了
-                            else {
-                                if (player.hasPermission(decision.getString(giftname + ".permission"))) {
-                                    boolean decide = this.booleangetgift(sender,player,giftname,times,decision);
-                                    if(decide == true){
-                                        this.getgift(sender,player,giftname);
+                            else if (booleantime == true) {
+                                if (booleanpermission == true) {
+                                    if (player.hasPermission(decision.getString(giftname + ".permission"))) {
+                                        boolean decide = this.booleangetgift(sender, player, giftname, times, decision);
+                                        if (decide == true) {
+                                            this.getgift(sender, player, giftname);
+                                        }
+                                        else{
+                                            sender.sendMessage("§c距离下一次领取礼包世界还有"+howdays.toString()+"时"+howminutes.toString()+"分"+howseconds.toString()+"秒");
+                                        }
                                     }
                                 }
                             }
@@ -305,6 +324,22 @@ public class Main extends JavaPlugin {
                     this.donthavePermission(sender);
                 }
             }
+            else if (args[0].equalsIgnoreCase("getothers")){
+                Player player = (Player)sender;
+                if (othersitem.containsKey(player.getName())){
+                    for (Integer space = 1; space <= 33; space++) {
+                        if (player.getInventory().firstEmpty() == -1) {
+                            sender.sendMessage("§c你的背包空间不足!");
+                        }
+                        else {
+                            player.getInventory().addItem(othersitem.get(player.getName()).get(space));
+                            othersitem.get(player.getName()).remove(space);
+                            saveorloadhashmap.saveothersitem(othersitem,othersitempath);
+                            sender.sendMessage("成功领取之前剩下的礼包物品");
+                        }
+                    }
+                }
+            }
             else if (args[0].equalsIgnoreCase("list")){
                 sender.sendMessage("§a已经存在的礼包:");
                 for (HashMap.Entry<String,HashMap<String,ItemStack>> entry:globalgift.entrySet()){
@@ -312,9 +347,34 @@ public class Main extends JavaPlugin {
                 }
                 sender.sendMessage("§a--------------------");
             }
+            else if (args[0].equalsIgnoreCase("reload")){
+                this.reloadConfig();
+                File timesfile = new File(this.getDataFolder(),"times.yml");
+                File decisionfile = new File(this.getDataFolder(),"decision.yml");
+                File configfile = new File(this.getDataFolder(),"config.yml");
+                if (timesfile.exists()) {
+                    times = YamlConfiguration.loadConfiguration(timesfile);
+                }
+                else{
+                    this.createfile(timesfile);
+                }
+                if (decisionfile.exists()) {
+                    decision = YamlConfiguration.loadConfiguration(decisionfile);
+                }
+                else {
+                    this.createfile(decisionfile);
+                }
+                if (configfile.exists()) {
+                    config = YamlConfiguration.loadConfiguration(configfile);
+                }
+                else {
+                    this.saveDefaultConfig();
+                }
+            }
             else if (args[0].equalsIgnoreCase("help")) {
                 this.help(sender);
-            } else {
+            }
+            else {
                 sender.sendMessage("§c指令错误!请使用"+prefix+" help查询指令");
             }
         }
@@ -337,14 +397,24 @@ public class Main extends JavaPlugin {
         }
     }
 
+    private void savefile(File file,FileConfiguration configuration){
+        try{
+            configuration.save(file);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void help(CommandSender sender) {
-        sender.sendMessage("§a/" + prefix + " create [礼包名]----创建礼包");
-        sender.sendMessage("§a/" + prefix + " add [礼包名]----把手中物品添加进礼包");
-        sender.sendMessage("§a/" + prefix + " remove [礼包名]----删除礼包");
-        sender.sendMessage("§a/" + prefix + " set [类型] [礼包名] [天数/权限]----礼包类型分别是 时间 权限");
-        sender.sendMessage("§a/" + prefix + " get [礼包名]----领取礼包");
-        sender.sendMessage("§a/" + prefix + " getothers----领取上次没领取完的礼包");
-        sender.sendMessage("§a/" + prefix + " list----礼包列表");
+        sender.sendMessage("§a/" + prefix + " create [礼包名] ----创建礼包");
+        sender.sendMessage("§a/" + prefix + " add [礼包名 ]----把手中物品添加进礼包");
+        sender.sendMessage("§a/" + prefix + " remove [礼包名] ----删除礼包");
+        sender.sendMessage("§a/" + prefix + " set [类型] [礼包名] [天数/权限] ----礼包类型分别是 时间 权限");
+        sender.sendMessage("§a/" + prefix + " get [礼包名] ----领取礼包");
+        sender.sendMessage("§a/" + prefix + " getothers ----领取上次没领取完的礼包");
+        sender.sendMessage("§a/" + prefix + " reload ----重载配置文件");
+        sender.sendMessage("§a/" + prefix + " list ----礼包列表");
     }
 
     private void donthavethisgift(CommandSender sender, String giftname) {
@@ -429,6 +499,11 @@ public class Main extends JavaPlugin {
                 //强行转换成整数类型，直接去掉商的小数。
                 days = (int)((to-from)/(1000*60*60*24));
                 decide = Integer.parseInt(decision.getString(giftname+".time"))<=days;
+                int minutes = (int)((to-from)/(1000*60*60));
+                int seconds = (int)((to-from)/(1000*60));
+                howdays = days;
+                howminutes = minutes;
+                howseconds = seconds;
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -436,7 +511,7 @@ public class Main extends JavaPlugin {
             }
         }
         else {
-            decide = false;
+            decide = true;
         }
         return decide;
     }

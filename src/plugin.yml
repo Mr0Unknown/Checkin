@@ -4,7 +4,12 @@ version: 1.5.1
 commands:
   qiandao
 permissions:
-  checkin.player:
+  Checkin.player:
     description: 玩家默认拥有一部分权限
     default: true
     children:
+  Checkin.create:
+  Checkin.add:
+  Checkin.remove:
+  Checkin.set:
+  Checkin.get:
