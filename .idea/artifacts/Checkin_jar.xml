@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Checkin:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Checkin_jar</output-path>
+    <root id="archive" name="Checkin.jar">
+      <element id="module-output" name="Checkin" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/config.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
+    </root>
+  </artifact>
+</component>

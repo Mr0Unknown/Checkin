@@ -1,2 +1,3 @@
-#下面为修改插件指令前缀（以免冲突 默认为qiandao） 此功能未开放 将在后续版本更新
-prefix: Checkin
+prefix:
+  message: "&b&l[\u7b7e\u5230\u63d2\u4ef6] "
+  command: "qiandao"
