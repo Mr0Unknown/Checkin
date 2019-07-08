@@ -72,7 +72,13 @@ public class Main extends JavaPlugin {
         File globalgiftfile = new File(this.getDataFolder() + File.separator + "Binary","globalgift.bin");
         if (globalgiftfile.exists()){
             //加载HashMap globalgift
-            saveorloadhashmap.loadedglobalgift(globalgiftpath);
+            try {
+                globalgift = saveorloadhashmap.loadglobalgift(globalgiftpath);
+            }
+            catch (Exception e){
+                getLogger().info("服务器在加载globalgift时出现了错误:");
+                e.printStackTrace();
+            }
         }
         else {
             try {
@@ -84,7 +90,13 @@ public class Main extends JavaPlugin {
         }
         if (othersitemfile.exists()) {
             //加载HashMap othersitem
-            saveorloadhashmap.loadedothersitem(othersitempath);
+            try {
+                othersitem = saveorloadhashmap.loadothersitem(othersitempath);
+            }
+            catch (Exception e){
+                getLogger().info("服务器在加载othersitem时出现了错误:");
+                e.printStackTrace();
+            }
         }
         else {
             try{
@@ -540,7 +552,13 @@ public class Main extends JavaPlugin {
                         File globalgiftfile = new File(this.getDataFolder() + File.separator + "Binary","globalgift.bin");
                         if (globalgiftfile.exists()){
                             //加载HashMap globalgift
-                            saveorloadhashmap.loadedglobalgift(globalgiftpath);
+                            try {
+                                globalgift = saveorloadhashmap.loadglobalgift(globalgiftpath);
+                            }
+                            catch (Exception e){
+                                getLogger().info("服务器在加载globalgift时出现了错误:");
+                                e.printStackTrace();
+                            }
                         }
                         else {
                             try {
@@ -552,7 +570,13 @@ public class Main extends JavaPlugin {
                         }
                         if (othersitemfile.exists()) {
                             //加载HashMap othersitem
-                            saveorloadhashmap.loadedothersitem(othersitempath);
+                            try {
+                                othersitem = saveorloadhashmap.loadothersitem(othersitempath);
+                            }
+                            catch (Exception e){
+                                getLogger().info("服务器在加载othersitem时出现了错误:");
+                                e.printStackTrace();
+                            }
                         }
                         else {
                             try{
